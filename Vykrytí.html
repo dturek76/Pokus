@@ -1,0 +1,143 @@
+
+        <!DOCTYPE html>
+        <html lang="cs">
+        <head>
+        <meta charset="UTF-8">
+        <title>Vykrytí.pdf</title>
+        </head>
+        <body>
+        <pre>
+        Vykrytí
+
+úterý 19.března 2024 — 15:08
+
+1. Sekvence
+a. Protože se bude na zakázkách vytvářet doklad OVyk je potřeba mu nadefinovat sekvenci.
+
+Entita Položka Pracoviště Platnost
+lgCzRevaluatonRecordHesd - Hlavička přeceňovacího: root
+LgCzinventoryRecordHead - Hlavičká inventury root
+
+LgCzÉ rternalOrderRecordHesd - Hlavika české objedr: root
+
+2. Instance externího systému
+a. Nastavit tvorbu logistického vykrytí
+/ Netvořit vykrytí ve schvalování:
+/ Vytvářet logistické vykrytí
+b. Je potřeba vytvořit a zadat Typ logistického identifikátoru.
+i. Pokud se budou posílat i vratky do externího systému (umí pouze FaRMIS a FAMA+), pak se musí zadat stejný kód typu identifiká toru, který používá externí systém.
+ii.. Pokud se nebudou posílat vratky, může se vytvořit identifikátor s libovolným kódem.
+
+3. Nákladová střediska a externí pracoviště (Cíle mapování resp. CVVM) - situace PPřesE
+a. Jedná se sice o situaci PPřesE, ale používáme ji i pro dak\ady vvkrvtl ovyk.
+
+vání nákla jedi xterních pracovišť
+kód FaRMIS->GYN.L
+FaRMIS->GYNLL
+FaRMIS - Farmis
+Chový systém FONS - FONS
+Uzel GYNLL - Gynekologické oddělení ůžka
+
+202330 - Gynekologicko - porodnické oddělení
+
+* středisko | 202080 - Ústavní lékáma
+
+é
+
+b. Význam položek
+i. Uzel - nastavit útvar, pro který je vykrytí určeno
+ii.. Externí kód uzlu
+1) Na zakázce nastavuji pouze pokud externí systém tento element posílá. Pokud ne, není potřeb nastavovat. Pokud ale na zakázce existuje k jednomu NS více útvarů a
+v FE chceme pro každý vytvářet jeho vykrývající doklady, musí externí systém tento element plnit a posílat.
+2) Vkomunikaci element - ClinicalRepositoryCode - nepovinný
+a) Pokud používá externí systém pro náš útvar jiný kód, musím ho zadat jako alias k našemu útvaru. Na obrázku příklad aliasu pro útvar TRLB, kde externí systém
+FaRMIS (jeho instance FaRMIS NEM) používá pro tento útvar svůj kód TRLB. 886.
+
++| Werkplace06 - Lůžková stanice: * TR-Taue
++(mR8 « Traumato
++(20
+
+Brtermí ráze
+
+trem pops
+
+Z ogsta Be
+
+přinat scminstratvné:
+Neniurenproprácí kinickýchužvatelů — — Lze překáádt z útvaru typu LON
+Adresa nenastavené
+Skupina Požadí m]
+
+iii.. Cílové nákladové středisko
+1) Nastavit NS, pro které je vykrytí určeno, kde se vytvoří logistický doklad.
+2) Vkomunikace element - CostCentreClinicalRepository - povinný
+
+WFE Staré na nové - stránka 1
+
+
+a) Pokud používá externí systém pro naše NS jiný kód, musím ho zadat jako alias k našemu nákladovému středisku. Na obrázku příklad aliasu pro NS 123456, kde
+externí systém FaRMIS (jeho instance FaRMIS NEM) používá pro toto NS svůj kód 1234.
+Nákladové středisko
+
+iv. Zdrojové nákladové středisko
+1) Vkomunikaci element - CostCentreCentralRepository - nepovinný
+2) Pokud je tento element externím systémem posílán, musí být v konfiguraci zadán a tudíž musí toto NS existovat i v číselníku NS.
+3) Pokud tento element není externím systémem posílán, nelze uživatelsky validovat přijímané zboží resp. je potřeba vytvořit speciálně konfiguraci pro doklady VPřesE.
+Doporučuji tedy na všech zakázkách zařídit, aby externí systém tuto hodnotu zasílal, i když bude na straně FE pro doklad vratky nakonfigurována logika "slepé"
+VPřesE.
+
+4) Ukázat příklad na releaseUNB na pracovištích V3Test v. CHLB kde u dokladů PPřesE jsou různá NS
+
+v. Externí pracoviště
+1) Nevyužíváme a nemusíme vyplňovat.
+
+vi. Kód externího pracoviště
+1) Vkomunikace element CentralRepositoryCode - povinný
+2) Není potřeba mít v FE vytvořen útvar se stejným kódem, ale je potřeba sem do konfigurace zapsat zasílanou hodnotu, protože se pro vyhledávání příslušné
+konfigurace používá.
+
+<.
+
+ii.. Check-boxy - ponechány pouze ty, které pro situaci PPřesE používají
+1) Priorita - Používá se při dohledávání konfigurace, když je nalezeno více konfigurací, tak která je prioritnější. Dle mého by taková situace neměla na zakázkách
+nastávat a vždy by měla být konfigurace udělána tak, aby byla jedinečná a duplicity neexistovaly.
+2) Kontrolovat nezařazené skupiny zboží - Používá se pro doklady PPřesE, OVyk i VPřesE, kde určuje, zda se mají kontrolovat nezařazené skupiny.
+3) Sumovat řádky dle položky Identifier - Používá se pro doklady PPřesE, kde určuje, zda se mají řádky se stejnou hodnotou položky Identifier sumovat do jednoho
+řádku dokladu PPřesE. Pokud tedy externí systém posílá i šarži a sériové číslo, vznikne, pro stejný "IKSkladu" resp. identifier jeden řádek s několika EMVS balíčky.
+Pokud by nebylo zaškrtnuto, vnikne tolik řádků na dokladu, kolik přijde hodnot serail number resp. řádků vykrytí. Komunikace rozhraní V3 totiž neumožňuje poslat
+na jednom řádku více EMVS identifikací.
+4) Nepoužívat název magistraliter - Používá se pro doklady PPřesE a OVyk, kde při zaškrtnutí nepřenáší do řádku dokladu název MS přípravku z externího systému, ale
+použije ten z číselníku FE.
+Dopočítávat přirážku lékárny - Používá se pro doklady PPřesE a OVyk, kde při zaškrtnutí si FE spočítá dle plátcovství přirážku lékárny a nepoužije hodnotu z externího
+systému. Používá se při komunikacích dvou CS.
+Odmítnout neplatné zboží - Používá se pro doklady PPřesE a OVyk, kde při zaškrtnutí by nemělo docházet k vytváření dokladů, pokud není v číselníku FE platné
+zboží. Celá logika je ale složitější a záleží ještě na "skrytém" nastavení v LogisteDeployConfiguration. Nastavování tohoto příznaku by mělo být vždy učiněno, až po
+správné úvaze, jak chceme na dané zakázce postupovat.
+
+E)
+
+6)
+
+4. Jaký doklad
+a. Jestli na straně FE vznikne doklad PPřesE nebo doklad OVyk záleží na několika věcech:
+i.. Hodnota elementu RecordType
+1) Redguisition - Vždy vnikne doklad OVyk.
+2) Transfer
+a) Vznikne doklad PPřesE, pokud je na cílovém pracovišti sklad.
+b) Vznikne doklad OVyk, pokud na cílovém pracovišti není sklad.
+ii. Existuje ještě jedna situace a to, když posílá externí systém prázdné finální vykrytí. Pak vznikne vždy doklad OVyk.
+
+5. Tasky
+a. Určitě by bylo fajn implementovat task na komunikační log, který bude sledovat, zda nepřicházejí vykrytí a končící chybou - LECommunicationLogListEntityListErrorTask.
+
+6. Cílový systém pro příjem vykrytí
+a. EntityBuilder - ApReguisitionRecordHeadEditModule -> parametr Systém pro schvalování - Zadat instanci systému FONS.
+
+WFE Staré na nové - stránka 2
+
+
+
+        </pre>
+        </body>
+        </html>
+        
